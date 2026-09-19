@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probemathon — A Reverse Hackathon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #14161C;
+    --ink-soft: #3A3D46;
+    --paper: #F6F1E4;
+    --paper-dim: #EAE3D0;
+    --amber: #FFC94A;
+    --coral: #FF5C39;
+    --line: rgba(20,22,28,0.14);
+    --bg: var(--ink);
+    --fg: var(--paper);
+    --fg-dim: #B9BBC4;
+    --card-bg: #1C1F29;
+    --card-line: rgba(246,241,228,0.12);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: var(--ink);
+      --fg: var(--paper);
+      --card-bg: #1C1F29;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: var(--ink);
+    --fg: var(--paper);
+    --card-bg: #1C1F29;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; }
+
+  h1, h2, h3, .display {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* NAV */
+  header.nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(20,22,28,0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--card-line);
+  }
+  .nav-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo .mark {
+    display: inline-block;
+    width: 10px; height: 10px;
+    background: var(--amber);
+    border-radius: 2px;
+    transform: rotate(45deg);
+  }
+  nav.links {
+    display: flex;
+    gap: 28px;
+  }
+  nav.links a {
+    color: var(--fg-dim);
+    text-decoration: none;
+    font-size: 0.94rem;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+  nav.links a:hover, nav.links a:focus-visible { color: var(--paper); }
+  .nav-cta {
+    background: var(--amber);
+    color: var(--ink);
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { background: #ffd670; }
+  .menu-toggle { display: none; }
+
+  @media (max-width: 760px) {
+    nav.links { display: none; }
+    .menu-toggle {
+      display: block;
+      background: none;
+      border: 1px solid var(--card-line);
+      color: var(--paper);
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+  }
+
+  /* HERO */
+  .hero {
+    padding: 96px 0 80px;
+    position: relative;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 48px;
+    align-items: center;
+  }
+  @media (max-width: 820px) {
+    .hero-grid { grid-template-columns: 1fr; }
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--amber);
+    font-weight: 600;
+    margin-bottom: 22px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 6px; height: 6px;
+    background: var(--amber);
+    border-radius: 50%;
+  }
+  .hero h1 {
+    font-size: clamp(2.6rem, 6vw, 4.4rem);
+    color: var(--paper);
+    max-width: 11ch;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--amber);
+  }
+  .hero p.lede {
+    margin-top: 22px;
+    font-size: 1.15rem;
+    color: var(--fg-dim);
+    max-width: 46ch;
+    line-height: 1.55;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 34px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--coral);
+    color: var(--paper);
+    padding: 14px 26px;
+    border-radius: 7px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.98rem;
+    display: inline-block;
+    transition: transform 0.12s ease, background 0.15s ease;
+  }
+  .btn-primary:hover { background: #ff7255; transform: translateY(-1px); }
+  .btn-secondary {
+    border: 1px solid var(--card-line);
+    color: var(--paper);
+    padding: 14px 26px;
+    border-radius: 7px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.98rem;
+  }
+  .btn-secondary:hover { border-color: var(--fg-dim); }
+
+  /* Hero visual: the question mark sculpture */
+  .qmark-box {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qmark-box svg { width: 100%; height: 100%; }
+
+  .dates-badge {
+    margin-top: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: var(--fg-dim);
+    border: 1px dashed var(--card-line);
+    padding: 9px 14px;
+    border-radius: 6px;
+  }
+  .dates-badge strong { color: var(--paper); font-weight: 600; }
+
+  /* SECTION shared */
+  section { padding: 84px 0; }
+  .section-head {
+    max-width: 56ch;
+    margin-bottom: 48px;
+  }
+  .section-head h2 {
+    font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+    color: var(--paper);
+  }
+  .section-head p {
+    margin-top: 14px;
+    color: var(--fg-dim);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+  .kicker {
+    color: var(--amber);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  /* CONCEPT - flip cards */
+  .flip-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 28px;
+    align-items: center;
+  }
+  @media (max-width: 720px) {
+    .flip-row { grid-template-columns: 1fr; }
+    .flip-arrow { transform: rotate(90deg); margin: 0 auto; }
+  }
+  .flip-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-line);
+    border-radius: 12px;
+    padding: 32px;
+  }
+  .flip-card h3 {
+    font-size: 1.2rem;
+    color: var(--fg-dim);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .flip-card.hot h3 { color: var(--amber); }
+  .flip-card p { color: var(--fg-dim); line-height: 1.55; font-size: 0.98rem; }
+  .flip-arrow { color: var(--amber); font-size: 1.6rem; }
+
+  /* ROUNDS */
+  .rounds {
+    display: grid;
+    gap: 22px;
+  }
+  .round-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-line);
+    border-radius: 14px;
+    padding: 36px;
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 28px;
+  }
+  @media (max-width: 620px) {
+    .round-card { grid-template-columns: 1fr; }
+  }
+  .round-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1;
+  }
+  .round-card h3 {
+    font-size: 1.35rem;
+    color: var(--paper);
+    margin-bottom: 10px;
+  }
+  .round-card p { color: var(--fg-dim); line-height: 1.6; font-size: 1rem; }
+  .round-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .round-steps {
+    margin-top: 14px;
+    padding-left: 0;
+    list-style: none;
+  }
+  .round-steps li {
+    color: var(--fg-dim);
+    font-size: 0.94rem;
+    line-height: 1.5;
+    padding-left: 20px;
+    position: relative;
+    margin-top: 8px;
+  }
+  .round-steps li::before {
+    content: "→";
+    color: var(--amber);
+    position: absolute;
+    left: 0;
+  }
+  .tag {
+    font-size: 0.8rem;
+    color: var(--paper);
+    background: rgba(255,201,74,0.12);
+    border: 1px solid rgba(255,201,74,0.3);
+    padding: 5px 11px;
+    border-radius: 20px;
+  }
+
+  /* WHO / STATS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--card-line);
+    border: 1px solid var(--card-line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  @media (max-width: 620px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+  .stat {
+    background: var(--card-bg);
+    padding: 32px 28px;
+  }
+  .stat .num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--paper);
+  }
+  .stat .label {
+    margin-top: 6px;
+    color: var(--fg-dim);
+    font-size: 0.95rem;
+  }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 820px) {
+    .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .pricing-grid { grid-template-columns: 1fr; }
+  }
+  .price-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-line);
+    border-radius: 14px;
+    padding: 28px 24px;
+    text-align: left;
+  }
+  .price-card.featured {
+    border-color: var(--amber);
+    background: linear-gradient(180deg, rgba(255,201,74,0.09), var(--card-bg) 60%);
+  }
+  .price-card .tier {
+    color: var(--fg-dim);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .price-card .amount {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--paper);
+    margin-top: 8px;
+  }
+  .price-card .amount span {
+    font-size: 1rem;
+    color: var(--fg-dim);
+    font-weight: 500;
+  }
+  .price-card .members {
+    margin-top: 10px;
+    color: var(--fg-dim);
+    font-size: 0.92rem;
+  }
+
+  /* REGISTRATION FORM */
+  .reg-band {
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 20px;
+    padding: 56px 48px;
+    margin: 0 28px;
+  }
+  @media (max-width: 620px) { .reg-band { padding: 40px 24px; } }
+  .reg-head h2 { color: var(--ink); font-size: clamp(1.7rem, 3.6vw, 2.3rem); }
+  .reg-head p { color: var(--ink-soft); margin-top: 10px; max-width: 54ch; }
+  .reg-form {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 620px) { .reg-form { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .field .hint { font-weight: 400; color: var(--ink-soft); font-size: 0.82rem; }
+  .field input, .field select, .field textarea {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.96rem;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(20,22,28,0.22);
+    background: #FFFDF8;
+    color: var(--ink);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: 2px solid var(--coral);
+    outline-offset: 1px;
+  }
+  .field textarea { resize: vertical; min-height: 84px; }
+  .reg-submit-row {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .reg-note {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    grid-column: 1 / -1;
+  }
+  #reg-status {
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+  #reg-status.ok { color: #1E7A3D; }
+  #reg-status.err { color: var(--coral); }
+
+  /* CERTIFICATES */
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  @media (max-width: 720px) {
+    .cert-grid { grid-template-columns: 1fr; }
+  }
+  .cert-card {
+    border: 1px solid var(--card-line);
+    border-radius: 14px;
+    padding: 30px 26px;
+    background: var(--card-bg);
+  }
+  .cert-card .stage {
+    color: var(--amber);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .cert-card h3 {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: var(--paper);
+  }
+  .cert-card p {
+    margin-top: 10px;
+    color: var(--fg-dim);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    border-left: 2px solid var(--card-line);
+    margin-left: 8px;
+    padding-left: 32px;
+    display: grid;
+    gap: 34px;
+  }
+  .tl-item { position: relative; }
+  .tl-item::before {
+    content: "";
+    position: absolute;
+    left: -40px;
+    top: 4px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--card-line);
+  }
+  .tl-item h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    color: var(--paper);
+    font-weight: 600;
+  }
+  .tl-item .when {
+    color: var(--amber);
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-top: 4px;
+    display: block;
+  }
+  .tl-item p { color: var(--fg-dim); margin-top: 6px; font-size: 0.96rem; }
+
+  /* FAQ */
+  .faq-item {
+    border-top: 1px solid var(--card-line);
+    padding: 22px 0;
+  }
+  .faq-item:last-child { border-bottom: 1px solid var(--card-line); }
+  .faq-item summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    color: var(--paper);
+    font-size: 1.05rem;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: "+";
+    font-size: 1.4rem;
+    color: var(--amber);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item .answer {
+    margin-top: 14px;
+    color: var(--fg-dim);
+    line-height: 1.6;
+    max-width: 62ch;
+  }
+
+  /* CTA / FOOTER */
+  .cta-band {
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 20px;
+    padding: 64px 48px;
+    text-align: center;
+    margin: 0 28px;
+  }
+  @media (max-width: 620px) { .cta-band { padding: 48px 24px; } }
+  .cta-band h2 {
+    color: var(--ink);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+  }
+  .cta-band p {
+    color: var(--ink-soft);
+    margin-top: 14px;
+    font-size: 1.05rem;
+    max-width: 50ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cta-band .btn-primary { margin-top: 28px; }
+
+  footer {
+    padding: 56px 0 40px;
+    border-top: 1px solid var(--card-line);
+    margin-top: 40px;
+  }
+  .footer-grid {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  footer .logo { margin-bottom: 8px; }
+  footer .contact { color: var(--fg-dim); font-size: 0.92rem; line-height: 1.7; }
+  footer .contact a { color: var(--paper); text-decoration: none; border-bottom: 1px dotted var(--fg-dim); }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo"><span class="mark"></span>Probemathon</div>
+    <nav class="links">
+      <a href="#concept">Concept</a>
+      <a href="#rounds">Rounds</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#timeline">Timeline</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="nav-cta" href="register.html" target="_blank" rel="noopener">Register your team</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">A reverse hackathon, open to everyone</span>
+      <h1>Got a problem? <em>That's the whole point.</em></h1>
+      <p class="lede">Most hackathons hand you a problem and ask for code. Probemathon flips it: you find the problem worth solving, pitch why it matters, and show the judges your solution before anyone else even sees the question. Open to anyone, from any college.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="register.html" target="_blank" rel="noopener">Register your team</a>
+        <a class="btn-secondary" href="#rounds">See how it works</a>
+      </div>
+      <div class="dates-badge">Event date: <strong>17 Oct 2026</strong> · Venue: <strong>SVPCET, Nagpur</strong></div>
+    </div>
+    <div class="qmark-box" aria-hidden="true">
+      <svg viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="160" cy="160" r="150" stroke="#3A3D46" stroke-width="1.5" stroke-dasharray="4 8"/>
+        <text x="160" y="215" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="260" fill="#FFC94A">?</text>
+        <circle cx="252" cy="96" r="7" fill="#FF5C39"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="concept">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">The concept</span>
+      <h2>We flipped the usual hackathon format</h2>
+      <p>A regular hackathon gives you the problem on day one. Probemathon makes finding a real, worthwhile problem the first challenge — because a great solution is worthless if it's solving the wrong thing.</p>
+    </div>
+    <div class="flip-row">
+      <div class="flip-card">
+        <h3>A usual hackathon</h3>
+        <p>Organizers hand every team the same problem statement. Teams race to build the best solution to a question they didn't choose.</p>
+      </div>
+      <div class="flip-arrow">→</div>
+      <div class="flip-card hot">
+        <h3>Probemathon</h3>
+        <p>You choose the problem — from campus life, daily life, or something bigger — and pitch both the problem and your solution as one idea.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rounds">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">How it works</span>
+      <h2>Two rounds, from idea to pitch</h2>
+      <p>Every team goes through the same two stages — first on paper, then on stage. Registration is open now, right up to the event.</p>
+    </div>
+    <div class="rounds">
+      <div class="round-card">
+        <div class="round-num">01</div>
+        <div>
+          <h3>Frame the problem, propose the fix</h3>
+          <p>Pick a problem from college life, daily life, your country, or anywhere else worth solving. Build a PPT that lays out the problem clearly and proposes your solution. Submit it — no live presenting yet, this round is judged on the deck alone.</p>
+          <ul class="round-steps">
+            <li>Register your team anytime before the submission deadline</li>
+            <li>Pick a real, specific problem — the sharper the framing, the better</li>
+            <li>Build a PPT covering the problem, its impact, and your proposed solution</li>
+            <li>Submit before <strong style="color:#F6F1E4">15 Oct 2026</strong></li>
+            <li>Shortlist of 10–15 teams announced on <strong style="color:#F6F1E4">16 Oct 2026</strong></li>
+          </ul>
+          <div class="round-tags">
+            <span class="tag">PPT submission</span>
+            <span class="tag">Any theme</span>
+            <span class="tag">Deadline: 15 Oct 2026</span>
+          </div>
+        </div>
+      </div>
+      <div class="round-card">
+        <div class="round-num">02</div>
+        <div>
+          <h3>Pitch it to the judges</h3>
+          <p>Shortlisted teams present their problem and solution live in front of the judging panel. This is where you defend your idea, answer questions, and make the case for why it matters. Three teams walk away as winners.</p>
+          <ul class="round-steps">
+            <li>Shortlisted teams pitch live on <strong style="color:#F6F1E4">17 Oct 2026</strong> at SVPCET, Nagpur</li>
+            <li>Each team presents their problem and solution to the judging panel</li>
+            <li>Judges question teams on feasibility, originality, and impact</li>
+            <li>Top 3 teams are announced the same day</li>
+            <li>Winners take home prize money, a winning certificate, and goodies</li>
+          </ul>
+          <div class="round-tags">
+            <span class="tag">Live pitch — 17 Oct 2026</span>
+            <span class="tag">Judge panel</span>
+            <span class="tag">3 winning teams</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="who">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Who can join</span>
+      <h2>Open to anyone, from any college</h2>
+      <p>Probemathon isn't limited to our campus, one department, or one year — if you can spot a problem worth solving, you're eligible, wherever you study.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="num">Any college</div>
+        <div class="label">Not limited to one campus — students from anywhere can register</div>
+      </div>
+      <div class="stat">
+        <div class="num">All years</div>
+        <div class="label">First-years to final-years, everyone's eligible</div>
+      </div>
+      <div class="stat">
+        <div class="num">Up to 4</div>
+        <div class="label">Team size ranges from solo to a squad of 4</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Registration</span>
+      <h2>Pick your team size</h2>
+      <p>One flat fee per team, based on how many of you are entering — from flying solo to a full squad of four.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="tier">Solo</div>
+        <div class="amount">₹50</div>
+        <div class="members">1 member</div>
+      </div>
+      <div class="price-card">
+        <div class="tier">Duo</div>
+        <div class="amount">₹80</div>
+        <div class="members">2 members</div>
+      </div>
+      <div class="price-card">
+        <div class="tier">Trio</div>
+        <div class="amount">₹120</div>
+        <div class="members">3 members</div>
+      </div>
+      <div class="price-card featured">
+        <div class="tier">Squad</div>
+        <div class="amount">₹150</div>
+        <div class="members">4 members</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certificates">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">What you take home</span>
+      <h2>Every team walks away with something</h2>
+      <p>Whether you're shortlisted or not, taking part earns you recognition — and it only goes up from there.</p>
+    </div>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <div class="stage">Every participant</div>
+        <h3>Participation certificate</h3>
+        <p>Everyone who submits a Round 1 entry gets a certificate for taking part.</p>
+      </div>
+      <div class="cert-card">
+        <div class="stage">Round 2 teams</div>
+        <h3>Appreciation certificate</h3>
+        <p>Teams shortlisted to pitch live receive an appreciation certificate on top of their participation certificate.</p>
+      </div>
+      <div class="cert-card">
+        <div class="stage">Top 3 teams</div>
+        <h3>Winning certificate + goodies</h3>
+        <p>All three winning teams get a winning certificate and goodies, on top of the prize money below.</p>
+      </div>
+    </div>
+
+    <div class="pricing-grid" style="margin-top:22px;">
+      <div class="price-card featured">
+        <div class="tier">🥇 1st Prize</div>
+        <div class="amount">₹1000</div>
+      </div>
+      <div class="price-card">
+        <div class="tier">🥈 2nd Prize</div>
+        <div class="amount">₹650</div>
+      </div>
+      <div class="price-card">
+        <div class="tier">🥉 3rd Prize</div>
+        <div class="amount">₹350</div>
+      </div>
+      <div class="price-card">
+        <div class="tier">All 3 winners</div>
+        <div class="amount" style="font-size:1.3rem;">+ Goodies</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="timeline">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Timeline</span>
+      <h2>What happens, and roughly when</h2>
+      <p>Registrations are open now and stay open right up to the event — here's how the rest unfolds.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <span class="when">Open now</span>
+        <h4>Registrations open</h4>
+        <p>Teams sign up and get access to submission guidelines. Stays open until Round 1 closes.</p>
+      </div>
+      <div class="tl-item">
+        <span class="when">Before 15 Oct 2026</span>
+        <h4>Round 1 — PPT submission deadline</h4>
+        <p>Submit your problem statement and solution deck before the deadline.</p>
+      </div>
+      <div class="tl-item">
+        <span class="when">16 Oct 2026</span>
+        <h4>Shortlist announced</h4>
+        <p>10–15 teams are announced and move on to the pitch round.</p>
+      </div>
+      <div class="tl-item">
+        <span class="when">17 Oct 2026</span>
+        <h4>Round 2 — Live pitch day</h4>
+        <p>Shortlisted teams present in front of the judges. Winners announced.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">Questions</span>
+      <h2>Frequently asked</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item" open>
+        <summary>What kind of problem statement can I pick?</summary>
+        <div class="answer">Anything you can make a genuine case for — a problem from college life, daily life, your city or country, or a broader issue you care about. The only requirement is that it's real and your solution addresses it directly.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I need to build a working prototype?</summary>
+        <div class="answer">No. Round 1 is judged on your PPT — how well you frame the problem and how convincing your proposed solution is. Round 2 is about pitching that same idea live, not demoing a finished product.</div>
+      </details>
+      <details class="faq-item">
+        <summary>How many teams make it to Round 2?</summary>
+        <div class="answer">10 to 15 teams are shortlisted from all Round 1 submissions to move on to the live pitch round.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I need to be from your college to join?</summary>
+        <div class="answer">No — Probemathon is open to students from any college, not just ours. Anyone can register and take part.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Is there a team size limit?</summary>
+        <div class="answer">Yes — teams can be anywhere from 1 to 4 members (Solo, Duo, Trio, or Squad).</div>
+      </details>
+      <details class="faq-item">
+        <summary>How much does it cost to register?</summary>
+        <div class="answer">Registration is priced by team size: ₹50 for Solo, ₹80 for Duo, ₹120 for Trio, and ₹150 for Squad (4 members).</div>
+      </details>
+      <details class="faq-item">
+        <summary>What do winning teams get?</summary>
+        <div class="answer">The three winning teams receive a winning certificate along with goodies. Round 2 teams get an appreciation certificate, and everyone who submits a Round 1 entry gets a participation certificate.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="register">
+  <div class="wrap">
+    <div class="cta-band">
+      <h2>Have a problem worth pitching?</h2>
+      <p>Registration takes about two minutes — pick your team size, add your details, and you're in.</p>
+      <a class="btn-primary" href="register.html" target="_blank" rel="noopener">Register your team</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <div class="logo"><span class="mark"></span>Probemathon</div>
+      <p class="contact">A reverse hackathon, open to everyone.</p>
+    </div>
+    <div class="contact">
+      Questions? <a href="mailto:jayunimbulkar@gmail.com">jayunimbulkar@gmail.com</a><br>
+      Organized independently as a student-led event.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
